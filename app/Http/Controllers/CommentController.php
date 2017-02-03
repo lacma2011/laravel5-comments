@@ -49,7 +49,7 @@ class CommentController extends BaseController
             $comments[$comment_id] = $recurse_table($comment_id);
 
         } elseif (! empty($request['article_id'] || (isset($request['article_id'])) && $request['article_id'] == '0')) {
-            $comments = Comment::where('article_id','=',$request['article_id'])->get();
+            $comments = Comment::where('article_id','=',$request['article_id'])->where('reply_id', '=', NULL)->get();
         } else {
             $comments = Comment::all();
         }

@@ -23,6 +23,7 @@ class CommentController extends BaseController
             $comments = array();
             $recurse_table = function ($c_id, $nested_reply_count = 0) use (&$recurse_table) {
                 $comment = Comment::where('id', '=', $c_id)->first();
+                $comments['id'] = $comment['id'];
                 $comments['comment'] = $comment['comment'];
                 $comments['name'] = $comment['name'];
 
@@ -54,6 +55,24 @@ class CommentController extends BaseController
             $comments = Comment::all();
         }
         return $this->apiResponse(TRUE, 'Comments retrieved.', $comments);
+    }
+
+    /**
+     * Post a reply to a comment
+     * 
+     * @param Request $request Laravel Request object
+     * @param type $comment_id ID of comment to reply to
+     * @return array
+     */
+    function postReply(Request $request, $comment_id) {
+        $comment = new Comment;
+        $comment->name = $request['name'];
+        $comment->comment = $request['comment'];
+        $comment->article_id = $request['article_id'];
+        $comment->reply_id = $comment_id;
+        $comment->save();
+
+        return $this->apiResponse(TRUE, 'Reply saved.', $comment->toArray());
     }
 
     private function apiResponse($ok, $message, $data = array()) {

@@ -1,0 +1,54 @@
+<html>
+<head>
+<title>Demo</title>
+<script type="text/javascript" src="js/vendor/requirejs/require.min.js"></script>
+<script type="text/javascript" src="js/require-config.js"></script>
+<link rel="stylesheet" type="text/css" href="/css/app.css"> <!--laravel default stylesheet -->
+<link rel="stylesheet" type="text/css" href="css/main.css"> 
+<script>
+    
+// URL for API (note: port 8000 is for using PHP webserver with laravel & php 5.4+)
+var apiUrl = '//' + window.location.hostname + ':8000';
+// article ID to retrieve and post comments. The API's DB created article 1 as part of its install
+var articleId = 1;
+
+(function() {
+    requireJS(['app'], function(app) {
+        
+        // start app
+        app(apiUrl, articleId);
+
+    });
+}());
+
+</script>
+<style>
+    .left, .right {
+        width: 50%;
+    }
+    .left {
+        float: left;
+    }
+    .right {
+        float: left;
+    }
+    .clear {
+        clear:both;        
+    }
+</style>
+</head>
+<body>
+    Nested comments with jquery using REST API
+    <div></div>
+    <div class="left">
+        <h1>Comments</h2>
+        <div id="results">
+        </div>        
+    </div>
+    <div class="right">
+        <h1>Add New Comment</h2>
+        <div id="create-comment"></div>
+    </div>
+    <div class="clear"></div>
+</body>
+</html>

@@ -15,9 +15,9 @@ use Illuminate\Http\Request;
 
 // Get comment(s)
 // parameters:
-//      id - (optional) select single comment by comment ID. Will provide replies.
+//      comment_id - (optional) select single comment by comment ID. Will provide replies.
 // query string: filter by parameters
-Route::get('comment/{id?}', 'CommentController@get');
+Route::get('comment/{comment_id?}', 'CommentController@get');
 
 
 // Post new comment(s)

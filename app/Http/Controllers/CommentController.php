@@ -75,6 +75,24 @@ class CommentController extends BaseController
         return $this->apiResponse(TRUE, 'Reply saved.', $comment->toArray());
     }
 
+    /**
+     * Post a comment to an article
+     * 
+     * @param Request $request Laravel Request object
+     * @param type $article_id ID of article to comment on
+     * @return array
+     */
+    function post(Request $request, $article_id) {
+        $comment = new Comment;
+        $comment->name = $request['name'];
+        $comment->comment = $request['comment'];
+        $comment->article_id = $article_id;
+        $comment->reply_id = NULL;
+        $comment->save();
+
+        return $this->apiResponse(TRUE, 'Comment saved.', $comment->toArray());
+    }
+
     private function apiResponse($ok, $message, $data = array()) {
         $resp = new \Illuminate\Http\Response(json_encode([
             'data' => $data,

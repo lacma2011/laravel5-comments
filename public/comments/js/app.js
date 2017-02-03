@@ -26,24 +26,56 @@ return function (url, articleId) {
         // templates is an object with the templates indexed by keys in templateSources
         //  ex. var html = templating(templates['comment-item'], this.model.toJSON());
 
-        $('#results').empty().append('loading...');
-        // get article comments
-        $.get(api + 'comment?article_id=' + articleId).then(function(data){
-            $('#results').empty();
-            var list = $('<ul class="comments"></ul>');
-            $.each(data.data, function(k, obj) {
-                var comment = '<li>' + templating(templates['comment-item'], obj) + '</li>';
-                var ele = $(comment);
-                ele
-                        .find('.reply')
-                        .on('click', replyFn(ele, obj.id))
-                        .end()
-                        .find('.replies')
-                        .on('click', repliesFn(ele, obj.id));
-                list.append(ele);
+        // get comments
+        $('#results').empty().append('Loading Comments...');
+        refreshArticleComments();
+
+        // make form to comment on article
+        var form = $(templating(templates['comment-create'], {}))        
+        form
+                .find('button')
+                .first()
+                .on('click', function(e){
+                    e.stopImmediatePropagation();
+                    e.stopPropagation();
+                    $.ajax({
+                        url: api + 'comment/' + articleId,
+                        type: 'post',
+                        data: {
+                            name: form.find('.comment-name').val(),
+                            comment: form.find('.comment-comment').val(),
+                            reply_id: null,
+                            article_id: articleId
+                        }
+                    }).then(function(){
+                        // refresh comments
+                        refreshArticleComments();
+                        // clear form
+                        form.find("input[type=text]").val("");
+                    });
+                });
+        $('#create-comment').append(form);
+
+        function refreshArticleComments() {
+            // get article comments. These are not replies.
+            $.get(api + 'comment?article_id=' + articleId).then(function(data){
+                $('#results').empty();
+                var list = $('<ul class="comments"></ul>');
+                $.each(data.data, function(k, obj) {
+                    var comment = '<li>' + templating(templates['comment-item'], obj) + '</li>';
+                    var ele = $(comment);
+                    ele
+                            .find('.reply')
+                            .on('click', replyFn(ele, obj.id))
+                            .end()
+                            .find('.replies')
+                            .on('click', repliesFn(ele, obj.id));
+                    list.append(ele);
+                });
+                $('#results').append(list);
             });
-            $('#results').append(list);
-        });
+
+        }
 
         function repliesFn(ele, commentId) {
             return function (e) {
@@ -54,7 +86,6 @@ return function (url, articleId) {
                     .off('click');
                 // get replies
                 $.get(api + 'comment/' + commentId).then(function(data){
-console.log(data.data);
                     var list = $('<ul class="replies"></ul>');
                     $.each(data.data[commentId].replies, function(k, obj) {
                         var comment = '<li>' + templating(templates['comment-item'], obj) + '</li>';
@@ -68,6 +99,9 @@ console.log(data.data);
                                 .on('click',  repliesFn(newEle, obj.id));
                         list.append(newEle);
                     });
+                    if (list.children().length === 0) {
+                        list.append('<li>no replies found</li>');
+                    }
                     ele
                         .find('.replies')
                         .empty()
@@ -82,7 +116,7 @@ console.log(data.data);
                 e.stopPropagation();
                 e.stopImmediatePropagation();
                 ele.find('.reply').off('click');
-console.log('reply to ' + commentId);
+                //console.log('reply to ' + commentId);
                 var form = $(templating(templates['comment-create'], {}));
                 form
                         .find('button')
@@ -104,6 +138,9 @@ console.log('reply to ' + commentId);
                                 ele.find('.replies').empty();
                                 var fn = repliesFn(ele, commentId);
                                 fn({stopImmediatePropagation: $.noop, stopPropagation: $.noop});
+
+                                // clear form
+                                form.find("input[type=text]").val("");
                             });
                         });
                 ele

@@ -1,0 +1,13 @@
+.replies span,
+.reply span {
+    text-decoration: underline;    
+}
+.replies span:hover,
+.reply span:hover {
+    cursor: pointer;    
+}
+
+.comment-name,
+.comment-comment {
+    margin-left: 10px;
+}

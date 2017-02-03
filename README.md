@@ -45,3 +45,5 @@ Demo running at: http://pjb-comments.runwaypassport.com/comments/
     ```sh
     php artisan serve
 ```
+
+9. Go to http://127.0.0.1:8000/comments/index.html

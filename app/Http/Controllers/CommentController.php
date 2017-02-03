@@ -9,7 +9,9 @@ use Illuminate\Routing\Controller as BaseController;
 
 class CommentController extends BaseController
 {
-    const MAX_NESTED_REPLIES = 3;
+    // sets how deep nested replies will be retrieved for each comment in get() when comment ID is specified.
+    // Since client app only expects direct replies for each comment, I'll set this to 1.
+    const MAX_NESTED_REPLIES = 1;
 
     /**
      * 
